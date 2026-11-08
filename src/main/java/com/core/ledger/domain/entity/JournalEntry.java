@@ -1,8 +1,10 @@
 package com.core.ledger.domain.entity;
 
+import com.core.ledger.domain.Direction;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.math.BigInteger;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,15 +24,15 @@ public class JournalEntry {
     @Column(name = "reversal_of")
     private UUID reversalOf;
     private Instant createdAt = Instant.now();
-    @Getter
     @OneToMany(mappedBy = "journalEntry", cascade = CascadeType.ALL)
     private List<LedgerEntry> lines = new ArrayList<>();
     protected JournalEntry() {}
     public JournalEntry(String idempotencyKey, String description) {
-        this.id = UUID.randomUUID();
         this.idempotencyKey = idempotencyKey;
         this.description = description;
     }
-    public void addLine(LedgerEntry line) { lines.add(line); }
+    public void addLine(Account account, Direction direction, BigInteger amount, BigInteger balanceAfter) {
+        lines.add(new LedgerEntry(this, account, direction, amount, balanceAfter));
+    }
 
 }

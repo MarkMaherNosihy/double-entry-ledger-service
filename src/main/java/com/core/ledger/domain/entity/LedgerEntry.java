@@ -2,6 +2,7 @@ package com.core.ledger.domain.entity;
 
 import com.core.ledger.domain.Direction;
 import jakarta.persistence.*;
+import lombok.Setter;
 
 import java.math.BigInteger;
 import java.time.Instant;
@@ -12,6 +13,7 @@ import java.util.UUID;
 public class LedgerEntry {
     @Id
     private UUID id = UUID.randomUUID();
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "journal_entry_id")
     private JournalEntry journalEntry;
