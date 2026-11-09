@@ -1,4 +1,16 @@
 services:
+  app:
+    build: .
+    container_name: ledger-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ledger
+      SPRING_DATASOURCE_USERNAME: ledger
+      SPRING_DATASOURCE_PASSWORD: ledger
+    ports:
+      - "8080:8080"
   postgres:
     image: postgres:17
     container_name: ledger-postgres
