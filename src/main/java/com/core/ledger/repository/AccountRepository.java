@@ -13,6 +13,7 @@ import java.util.UUID;
 
 public interface AccountRepository extends JpaRepository<Account, UUID> {
 
+    //Test
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select a from Account a where a.id in :ids order by a.id")
     List<Account> lockAndGetAccountByIdIn(@Param("ids")Collection<UUID> ids);
