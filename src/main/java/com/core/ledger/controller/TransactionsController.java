@@ -3,10 +3,7 @@ package com.core.ledger.controller;
 
 import com.core.ledger.domain.Direction;
 import com.core.ledger.domain.entity.JournalEntry;
-import com.core.ledger.dtos.CreateJournalEntryRequest;
-import com.core.ledger.dtos.JournalEntryLine;
-import com.core.ledger.dtos.TransferRequest;
-import com.core.ledger.dtos.TransferResponse;
+import com.core.ledger.dtos.*;
 import com.core.ledger.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,4 +32,17 @@ public class TransactionsController {
         TransferResponse response = new TransferResponse(entry.getId());
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/reverse")
+    public ResponseEntity<TransferResponse> reverse(@RequestHeader("Idempotency-Key") String idempotencyKey,
+                                                     @Valid @RequestBody ReverseRequest req){
+
+        JournalEntry entry = transactionService.reverse( req.journalId(), idempotencyKey);
+        TransferResponse response = new TransferResponse(entry.getId());
+        return ResponseEntity.ok(response);
+    }
+
+
+
+
 }

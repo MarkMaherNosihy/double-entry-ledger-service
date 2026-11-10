@@ -84,4 +84,22 @@ public class TransactionService {
         }
         return debit.compareTo(credit) == 0;
     }
+
+    @Transactional
+    public JournalEntry reverse(UUID journalId, String IdempotencyKey){
+        Optional<JournalEntry> entry = journalEntryRepository.getEntryWithIdemKey(IdempotencyKey);
+        if(entry.isPresent()){
+            return entry.get();
+        }
+        JournalEntry journal = journalEntryRepository.findById(journalId).orElseThrow();
+        List<JournalEntryLine> flipped = journal.getLines().stream()
+                .map((l)->
+                        new JournalEntryLine(l.getAccount().getId(),l.getAmount(),  l.getDirection() == Direction.DEBIT ? Direction.CREDIT : Direction.DEBIT))
+                .toList();
+
+        JournalEntry reversal = post(new CreateJournalEntryRequest(IdempotencyKey, "Reversal", flipped));
+
+        reversal.markReversalOf(journalId);
+        return reversal;
+    }
 }
